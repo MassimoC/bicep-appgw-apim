@@ -6,6 +6,10 @@ parameters
 param environment_shortname string
 param prefix string 
 param app_suffix string
+param tags object = {
+  env: environment_shortname
+  costCenter: '1234'
+}
 
 /*
 ------------------------
@@ -25,6 +29,7 @@ var dns_name = toLower('${ip_name}')
 resource publicIP 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
   name: ip_name
   location: resourceGroup().location
+  tags: tags
   sku: {
     name: 'Standard'
   }
@@ -49,6 +54,7 @@ var debug_subnet_address = '30.1.12.0/29'
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: vnet_name
   location: resourceGroup().location
+  tags: tags
   properties: {
     addressSpace:{
       addressPrefixes:[

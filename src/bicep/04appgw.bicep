@@ -15,6 +15,7 @@ param app_suffix string
 param uamsi string
 param appgw_subnet_id string
 param appgw_publicip_id string
+param workspace_id string
 
 // default parameters
 param appgw_sku string = 'WAF_v2'
@@ -28,6 +29,10 @@ param keyvault_gw_cert string = 'goapicert'
 param keyvault_mgmt_cert string = 'mgmtapicert'
 param keyvault_portal_cert string = 'portalapicert'
 param keyvault_trustedrootca string = 'trustedrootca-domain-internal'
+param tags object = {
+  env: environment_shortname
+  costCenter: '1234'
+}
 
 /*
 ------------------------
@@ -71,6 +76,7 @@ resource appgw 'Microsoft.Network/applicationGateways@2020-11-01' = {
       '${existing_identity.id}' : {}
     }
   }
+  tags: tags
   properties:{
     sku:{
       name:appgw_sku
@@ -433,6 +439,50 @@ resource appgw 'Microsoft.Network/applicationGateways@2020-11-01' = {
   }
 }
 
+resource diagSettings 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+ name: 'writeToLogAnalytics'
+ scope: appgw
+ properties:{
+  workspaceId : workspace_id
+   logs:[
+     {
+       category: 'ApplicationGatewayAccessLog'
+       enabled:true
+       retentionPolicy:{
+         enabled:true
+         days: 20
+       }
+     }
+     {
+      category: 'ApplicationGatewayPerformanceLog'
+      enabled:true
+      retentionPolicy:{
+        enabled:true
+        days: 20
+      }
+    }  
+    {
+      category: 'ApplicationGatewayFirewallLog'
+      enabled:true
+      retentionPolicy:{
+        enabled:true
+        days: 20
+      }
+    }           
+   ]
+   metrics:[
+     {
+       enabled:true
+       timeGrain: 'PT1M'
+       retentionPolicy:{
+        enabled:true
+        days: 20
+      }
+     }
+   ]
+ }
+}
+ 
 
 /*
 ------------------------

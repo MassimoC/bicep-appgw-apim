@@ -8,6 +8,7 @@ param prefix string
 param app_suffix string 
 param uamsi string
 param apim_subnet_id string
+param workspace_id string
 
 // default parameters
 param apim_sku string = 'Developer'
@@ -18,7 +19,10 @@ param apim_mgmthostname string = 'mgmt.apifirst.internal'
 param keyvault_gw_cert string = 'go-domain-internal'
 param keyvault_mgmt_cert string = 'mgmt-domain-internal'
 param keyvault_portal_cert string = 'portal-domain-internal'
-
+param tags object = {
+  env: environment_shortname
+  costCenter: '1234'
+}
 
 /*
 ------------------------
@@ -52,7 +56,7 @@ var apim_service_name = '${prefix}-apm-${suffix}'
 var apim_publisher_email = 'massimo.crippa@codit.eu'
 
 
-resource apim 'Microsoft.ApiManagement/service@2020-06-01-preview' = {
+resource apim 'Microsoft.ApiManagement/service@2021-01-01-preview' = {
   name: apim_service_name
   location: resourceGroup().location
   sku:{
@@ -102,11 +106,37 @@ resource apim 'Microsoft.ApiManagement/service@2020-06-01-preview' = {
       '${existing_identity.id}' : {}
     }
   }
-  tags:{
-    //TODO how to effectively manage the tags
-    'displayName' : apim_service_name
-  }
 }
+
+resource diagSettings 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
+  name: 'writeToLogAnalytics'
+  scope: apim
+  properties:{
+   logAnalyticsDestinationType: 'Dedicated'
+   workspaceId : workspace_id
+    logs:[
+      {
+        category: 'GatewayLogs'
+        enabled:true
+        retentionPolicy:{
+          enabled:false
+          days: 0
+        }
+      }         
+    ]
+    metrics:[
+      {
+        category: 'AllMetrics'
+        enabled:true
+        timeGrain: 'PT1M'
+        retentionPolicy:{
+         enabled:false
+         days: 0
+       }
+      }
+    ]
+  }
+ }
 
 /*
 ------------------------

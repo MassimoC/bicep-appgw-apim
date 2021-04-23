@@ -50,6 +50,9 @@ module shared './02shared.bicep' = {
   }
 }
 
+// assign outputs to variables
+var workspace_id =  shared.outputs.workspaceId
+
 /*
 ------------------------------------------------
 API MANAGEMENT
@@ -64,6 +67,7 @@ module api_management './03apim.bicep' = {
     app_suffix: app_identifier
     uamsi : uamsi
     apim_subnet_id: apim_subnet_id
+    workspace_id: workspace_id
   }
 }
 
@@ -82,6 +86,7 @@ module appgw './04appgw.bicep' = {
     uamsi : uamsi
     appgw_subnet_id: appgw_subnet_id
     appgw_publicip_id: appgw_public_ip
+    workspace_id: workspace_id
   }
 }
 

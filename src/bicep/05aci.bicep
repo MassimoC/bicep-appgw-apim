@@ -7,6 +7,10 @@ param environment_shortname string
 param prefix string
 param app_suffix string 
 param aci_subnet_id string
+param tags object = {
+  env: environment_shortname
+  costCenter: '1234'
+}
 
 /*
 ------------------------
@@ -50,6 +54,7 @@ resource netprofile 'Microsoft.Network/networkProfiles@2020-11-01' = {
 resource aci 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
   name: aci_name
   location: resourceGroup().location
+  tags: tags
   properties:{
     restartPolicy:'Never'
     osType:'Linux'

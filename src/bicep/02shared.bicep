@@ -1,5 +1,3 @@
-// TODO : how to pass a block of TAGS
-
 /*
 ------------------------
 parameters
@@ -8,6 +6,10 @@ parameters
 param environment_shortname string
 param prefix string 
 param app_suffix string
+param tags object = {
+  env: environment_shortname
+  costCenter: '1234'
+}
 
 /*
 ------------------------
@@ -26,6 +28,7 @@ var lga_name = '${prefix}-lga-${suffix}'
 resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
   name: lga_name
   location: resourceGroup().location
+  tags: tags
   properties:{
     sku:{
       name: 'PerGB2018'
@@ -34,3 +37,9 @@ resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2020-10-01' = {
   }
 }
 
+/*
+------------------------
+outputs
+------------------------
+*/
+output workspaceId string = logAnalytics.id
