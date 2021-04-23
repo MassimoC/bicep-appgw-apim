@@ -59,6 +59,7 @@ var apim_publisher_email = 'massimo.crippa@codit.eu'
 resource apim 'Microsoft.ApiManagement/service@2021-01-01-preview' = {
   name: apim_service_name
   location: resourceGroup().location
+  tags: tags
   sku:{
     name: apim_sku
     capacity : apim_capacity
