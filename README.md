@@ -25,7 +25,7 @@ result of the deployment.
 PROs
 - It's easy to start, it reduces the complexity of the ARM template. You can have your comments and place the variables close to the objects they belong to.
 - the 'build' command is helpful during the development. ```bicep build .\filename.bicep``` 
-- the ```disassemble``` command can speed up the bicep development.
+- the ```decompile``` command can speed up the bicep development.
 - bicep allows to break down the ARM complexity by defining MODULES. For every module a 'Microsoft.Resources/deployments' resource will be created in the output ARM template.
 
 ![](images/generated_arm.png)
